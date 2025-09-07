@@ -57,4 +57,11 @@ button:hover {
     padding: 1.5em;
     border-radius: 8px;
     min-width: 150px;
+    text-align: center;
+}
+
+.user-card i {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+    color: #007bff;
 }

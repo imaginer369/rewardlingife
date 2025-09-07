@@ -13,15 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // We will add decryption logic here in the next step.
-        // For now, let's simulate a successful login to show the dashboard.
-
-        // 1. Fetch the encrypted database file (we'll create this soon)
         fetch('db.json.enc')
             .then(response => response.text())
             .then(encryptedData => {
                 try {
-                    // 2. Decrypt the data with the user's password
                     const decryptedBytes = CryptoJS.AES.decrypt(encryptedData, password);
                     const decryptedJson = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
@@ -31,9 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const data = JSON.parse(decryptedJson);
 
-                    // 3. Verify the password is correct
                     if (data.__verification_key__ === 'A_SECRET_STRING_THAT_PROVES_DECRYPTION_WORKED') {
-                        // Password is correct!
                         errorMessage.textContent = '';
                         passwordContainer.classList.add('hidden');
                         dashboardContainer.classList.remove('hidden');
@@ -58,7 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
         users.forEach(user => {
             const card = document.createElement('div');
             card.className = 'user-card';
-            card.innerHTML = `<h3>${user.name}</h3><p>Rewards: ${user.rewards}</p>`;
+            card.innerHTML = `
+                <i class="${user.icon}"></i>
+                <h3>${user.name}</h3>
+                <p>Total Rewards: ${user.rewards}</p>
+                <p>Local: ${user.local_rewards}</p>
+                <p>Global: ${user.global_rewards}</p>
+            `;
             userCardsContainer.appendChild(card);
         });
     }
