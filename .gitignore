@@ -1,0 +1,6 @@
+# Sensitive files
+db.json
+encrypt.js
+
+# Node.js dependencies
+node_modules

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reward Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="password-container">
+        <h2>Enter Password</h2>
+        <input type="password" id="password-input" placeholder="Password">
+        <button id="submit-password">Unlock</button>
+        <p id="error-message"></p>
+    </div>
+
+    <div id="dashboard-container" class="hidden">
+        <h1>User Rewards Dashboard</h1>
+        <div id="user-cards-container">
+            <!-- User cards will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
