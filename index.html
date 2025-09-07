@@ -4,13 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reward Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
     <div id="password-container">
-        <h2>Enter Password</h2>
+        <h2>Select Your Avatar</h2>
+        <div id="icon-selector">
+            <label>
+                <input type="radio" name="icon" value="rose" checked>
+                <i class="fas fa-fan"></i>
+            </label>
+            <label>
+                <input type="radio" name="icon" value="soldier">
+                <i class="fas fa-user-shield"></i>
+            </label>
+        </div>
         <input type="password" id="password-input" placeholder="Password">
         <button id="submit-password">Unlock</button>
         <p id="error-message"></p>

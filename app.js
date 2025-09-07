@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     submitButton.addEventListener('click', () => {
         const password = passwordInput.value;
+        const selectedIcon = document.querySelector('input[name="icon"]:checked').value;
+
+        // Log the selected icon for future use
+        console.log(`User logged in with the "${selectedIcon}" icon.`);
+
         if (!password) {
             errorMessage.textContent = 'Please enter a password.';
             return;
