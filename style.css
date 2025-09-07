@@ -35,15 +35,16 @@ h1 {
     display: none;
 }
 
-#icon-selector label i {
-    font-size: 3em;
-    color: rgba(255, 255, 255, 0.4);
+#icon-selector label img {
+    width: 60px;
+    height: 60px;
+    opacity: 0.4;
     cursor: pointer;
-    transition: color 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#icon-selector label input[type="radio"]:checked + i {
-    color: #e94560;
+#icon-selector label input[type="radio"]:checked + img {
+    opacity: 1;
     transform: scale(1.2);
 }
 
