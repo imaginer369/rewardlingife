@@ -10,6 +10,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background-color: #333;
+            color: #fff;
+            margin: 15% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-content h3 {
+          margin-top: 0;
+        }
+        /* Simple animations */
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+        @keyframes slideIn { from {transform: translateY(-50px);} to {transform: translateY(0);} }
+    </style>
 </head>
 <body>
 
@@ -34,6 +74,27 @@
         <h1>Rewarding Life</h1>
         <div id="user-cards-container">
             <!-- User cards will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- The Add Points Modal -->
+    <div id="add-points-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="modal-title">Add Points</h3>
+            <div class="update-container">
+                <label>Local Points to Add:</label>
+                <input type="number" id="modal-local-points" value="0">
+            </div>
+            <div class="update-container">
+                <label>Global Points to Add:</label>
+                <input type="number" id="modal-global-points" value="0">
+            </div>
+            <div class="update-container reason-container">
+                <label>Reason (How were these earned?):</label>
+                <input type="text" id="modal-reason" placeholder="e.g., Completed weekly challenge">
+            </div>
+            <button id="modal-submit-button" class="update-button">Add</button>
         </div>
     </div>
 
