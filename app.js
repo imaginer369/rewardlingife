@@ -38,8 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.error) {
                     throw new Error(data.error);
                 }
-                // NOTE: We trust the Apps Script for password verification on POST,
-                // so we don't need a password check here for the initial data load.
                 errorMessage.textContent = '';
                 passwordContainer.classList.add('hidden');
                 dashboardContainer.classList.remove('hidden');
@@ -75,16 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Disable button to prevent multiple clicks
             event.target.disabled = true;
             event.target.textContent = 'Updating...';
 
-            // Prepare the data package to send to the Apps Script
             const requestData = {
-                password: currentPassword,    // The password for authorization
-                updated_by: loggedInUser,     // Who is making the change
-                user_affected: username,      // Who is being changed
-                reason: reason,               // Why the change is being made
+                password: currentPassword,
+                updated_by: loggedInUser,
+                user_affected: username,
+                reason: reason,
                 new_local: newLocal,
                 new_global: newGlobal
             };
@@ -93,24 +89,22 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(APP_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(requestData),
+                cache: 'no-store', // Bypass the service worker
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'text/plain;charset=utf-8',
                 }
             })
             .then(response => response.json())
             .then(result => {
                 if (result.status === 'success') {
-                    // It worked! Refresh the page to see the new data.
                     location.reload(); 
                 } else {
-                    // The Apps Script sent back an error (e.g., wrong password)
                     throw new Error(result.message);
                 }
             })
             .catch(error => {
                 console.error('Update failed:', error);
                 alert('Update failed: ' + error.message);
-                // Re-enable button on failure
                 event.target.disabled = false;
                 event.target.textContent = 'Update';
             });
