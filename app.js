@@ -217,10 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             card.innerHTML = `
                 <img src="icons/${iconFilename}" alt="${user.username} icon" class="user-icon">
-                <h3>${user.username}</h3>
-                <p>Local Points: ${user.current_local_points || 0}</p>
-                <p>Global Points: ${user.current_global_points || 0}</p>
-                <p><strong>Total Rewards: ${totalPoints}</strong></p>
+                <div class="user-info">
+                    <h3>${user.username}</h3>
+                    <p>Local: ${user.current_local_points || 0}, Global: ${user.current_global_points || 0}</p>
+                    <p><strong>Total: ${totalPoints}</strong></p>
+                </div>
                 <div class="button-group">
                     <button class="add-points-button">Add</button>
                     <button class="redeem-points-button">Redeem</button>
