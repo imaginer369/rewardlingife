@@ -124,19 +124,22 @@ document.addEventListener('DOMContentLoaded', () => {
         users.forEach(user => {
             const card = document.createElement('div');
             card.className = 'user-card';
-            card.dataset.username = user.username; // Use 'username' from our sheet data
+            card.dataset.username = user.username;
+
+            const totalPoints = (user.current_local_points || 0) + (user.current_global_points || 0);
+            const iconFilename = user.username.toLowerCase() + '.png';
 
             card.innerHTML = `
-                <img src="icons/${user.icon_filename}" alt="${user.username} icon" class="user-icon">
+                <img src="icons/${iconFilename}" alt="${user.username} icon" class="user-icon">
                 <h3>${user.username}</h3>
-                <p>Total Rewards: ${user.total_points}</p>
+                <p>Total Rewards: ${totalPoints}</p>
                 <div class="update-container">
                     <label>Local:</label>
-                    <input type="number" class="local-points-input" value="${user.current_local_points}">
+                    <input type="number" class="local-points-input" value="${user.current_local_points || 0}">
                 </div>
                 <div class="update-container">
                     <label>Global:</label>
-                    <input type="number" class="global-points-input" value="${user.current_global_points}">
+                    <input type="number" class="global-points-input" value="${user.current_global_points || 0}">
                 </div>
                 <div class="update-container reason-container">
                     <label>Reason:</label>
