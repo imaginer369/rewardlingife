@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = usersData.find(u => u.username === username);
         if (!user) return;
 
-        // Store user data for both modals
         const currentLocal = user.current_local_points || 0;
         const currentGlobal = user.current_global_points || 0;
 
@@ -138,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!reason) { alert('Please provide a reason.'); return; }
         if (localToRedeem === 0 && globalToRedeem === 0) { alert('Please redeem at least one point.'); return; }
 
-        // --- VALIDATION: Ensure user has enough points ---
         if (localToRedeem > currentLocal || globalToRedeem > currentGlobal) {
             alert(`Update failed. User does not have enough points. Current points - Local: ${currentLocal}, Global: ${currentGlobal}`);
             return;
@@ -173,7 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(result => {
             if (result.status === 'success') {
-                location.reload();
+                // --- NEW LOGIC: Update UI without reloading ---
+                const userToUpdate = usersData.find(u => u.username === username);
+                if (userToUpdate) {
+                    userToUpdate.current_local_points = newLocal;
+                    userToUpdate.current_global_points = newGlobal;
+                }
+
+                displayUsers(usersData);
+
+                addModal.style.display = 'none';
+                redeemModal.style.display = 'none';
+
             } else {
                 throw new Error(result.message);
             }
@@ -181,6 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => {
             console.error('Update failed:', error);
             alert('Update failed: ' + error.message);
+        })
+        .finally(() => {
             submitButton.disabled = false;
             submitButton.textContent = actionText;
         });
