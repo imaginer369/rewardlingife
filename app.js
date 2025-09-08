@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- CONFIGURATION ---
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWvNptlQlkwRG9LLqiEX0mH_utIZTzvS5naEIQ4ZH_ydSx2rqWVMeS1D_7sX-cL-99ug/exec';
+
+    // --- DOM ELEMENTS ---
     const passwordContainer = document.getElementById('password-container');
     const dashboardContainer = document.getElementById('dashboard-container');
     const passwordInput = document.getElementById('password-input');
@@ -6,98 +10,137 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessage = document.getElementById('error-message');
     const userCardsContainer = document.getElementById('user-cards-container');
 
-    let loggedInIcon = null;
+    // --- APP STATE ---
+    let loggedInUser = null;
+    let currentPassword = null;
     let usersData = null;
 
+    // --- EVENT LISTENERS ---
+
+    // 1. Handle Login
     submitButton.addEventListener('click', () => {
         const password = passwordInput.value;
-        loggedInIcon = document.querySelector('input[name="icon"]:checked').value;
+        const selectedUserRadio = document.querySelector('input[name="icon"]:checked');
 
-        if (!password) {
-            errorMessage.textContent = 'Please enter a password.';
+        if (!password || !selectedUserRadio) {
+            errorMessage.textContent = 'Please select a user and enter the password.';
             return;
         }
 
-        fetch('db.json.enc')
-            .then(response => response.text())
-            .then(encryptedData => {
-                try {
-                    const decryptedBytes = CryptoJS.AES.decrypt(encryptedData, password);
-                    const decryptedJson = decryptedBytes.toString(CryptoJS.enc.Utf8);
+        loggedInUser = selectedUserRadio.value;
+        currentPassword = password; // Store the password for later use
+        errorMessage.textContent = 'Loading...';
 
-                    if (!decryptedJson) {
-                        throw new Error("Invalid password or corrupted data.");
-                    }
-
-                    const data = JSON.parse(decryptedJson);
-
-                    if (data.__verification_key__ === 'A_SECRET_STRING_THAT_PROVES_DECRYPTION_WORKED') {
-                        errorMessage.textContent = '';
-                        passwordContainer.classList.add('hidden');
-                        dashboardContainer.classList.remove('hidden');
-                        usersData = data.users;
-                        displayUsers(usersData);
-                    } else {
-                        throw new Error("Verification failed. Incorrect password.");
-                    }
-
-                } catch (e) {
-                    console.error(e);
-                    errorMessage.textContent = "Incorrect password. Please try again.";
+        // Fetch initial data from Google Sheet using a GET request
+        fetch(APP_SCRIPT_URL)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
                 }
+                // NOTE: We trust the Apps Script for password verification on POST,
+                // so we don't need a password check here for the initial data load.
+                errorMessage.textContent = '';
+                passwordContainer.classList.add('hidden');
+                dashboardContainer.classList.remove('hidden');
+                usersData = data;
+                displayUsers(usersData);
             })
             .catch(error => {
-                console.error('Error fetching the database file:', error);
-                errorMessage.textContent = 'Could not load the database file.';
+                console.error('Error fetching initial data:', error);
+                errorMessage.textContent = 'Could not load data. Check the script URL and sheet permissions.';
             });
     });
 
+    // 2. Handle Update Button Clicks
     userCardsContainer.addEventListener('click', (event) => {
         if (event.target.classList.contains('update-button')) {
             const userCard = event.target.closest('.user-card');
             const username = userCard.dataset.username;
-            const user = usersData.find(u => u.name === username);
 
             const localInput = userCard.querySelector('.local-points-input');
             const globalInput = userCard.querySelector('.global-points-input');
+            const reasonInput = userCard.querySelector('.reason-input');
 
             const newLocal = parseInt(localInput.value, 10);
             const newGlobal = parseInt(globalInput.value, 10);
+            const reason = reasonInput.value.trim();
 
-            if (user && !isNaN(newLocal) && !isNaN(newGlobal)) {
-                user.local_rewards = newLocal;
-                user.global_rewards = newGlobal;
-                user.rewards = user.local_rewards + user.global_rewards; 
-
-                const logMessage = `[${new Date().toISOString()}] User with '${loggedInIcon}' icon updated points for ${username}: Local -> ${newLocal}, Global -> ${newGlobal}\n`;
-                
-                // This is a simplified logging mechanism for the browser environment.
-                // In a real application, you would send this to a server.
-                console.log("Logging update: ", logMessage);
-                // Here we would ideally append to a file, but we'll simulate it.
-
-                displayUsers(usersData);
+            if (isNaN(newLocal) || isNaN(newGlobal)) {
+                alert('Please enter valid numbers for points.');
+                return;
             }
+             if (!reason) {
+                alert('Please provide a reason for the update.');
+                return;
+            }
+
+            // Disable button to prevent multiple clicks
+            event.target.disabled = true;
+            event.target.textContent = 'Updating...';
+
+            // Prepare the data package to send to the Apps Script
+            const requestData = {
+                password: currentPassword,    // The password for authorization
+                updated_by: loggedInUser,     // Who is making the change
+                user_affected: username,      // Who is being changed
+                reason: reason,               // Why the change is being made
+                new_local: newLocal,
+                new_global: newGlobal
+            };
+
+            // Send the update to the Google Apps Script using a POST request
+            fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(requestData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    // It worked! Refresh the page to see the new data.
+                    location.reload(); 
+                } else {
+                    // The Apps Script sent back an error (e.g., wrong password)
+                    throw new Error(result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Update failed:', error);
+                alert('Update failed: ' + error.message);
+                // Re-enable button on failure
+                event.target.disabled = false;
+                event.target.textContent = 'Update';
+            });
         }
     });
+
+    // --- UI RENDERING ---
 
     function displayUsers(users) {
         userCardsContainer.innerHTML = '';
         users.forEach(user => {
             const card = document.createElement('div');
             card.className = 'user-card';
-            card.dataset.username = user.name;
+            card.dataset.username = user.username; // Use 'username' from our sheet data
+
             card.innerHTML = `
-                <i class="${user.icon}"></i>
-                <h3>${user.name}</h3>
-                <p>Total Rewards: ${user.rewards}</p>
+                <img src="icons/${user.icon_filename}" alt="${user.username} icon" class="user-icon">
+                <h3>${user.username}</h3>
+                <p>Total Rewards: ${user.total_points}</p>
                 <div class="update-container">
                     <label>Local:</label>
-                    <input type="number" class="local-points-input" value="${user.local_rewards}">
+                    <input type="number" class="local-points-input" value="${user.current_local_points}">
                 </div>
                 <div class="update-container">
                     <label>Global:</label>
-                    <input type="number" class="global-points-input" value="${user.global_rewards}">
+                    <input type="number" class="global-points-input" value="${user.current_global_points}">
+                </div>
+                <div class="update-container reason-container">
+                    <label>Reason:</label>
+                    <input type="text" class="reason-input" placeholder="Reason for update...">
                 </div>
                 <button class="update-button">Update</button>
             `;
