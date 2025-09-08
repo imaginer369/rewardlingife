@@ -36,15 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Handle Login
     submitButton.addEventListener('click', () => {
         const password = passwordInput.value;
-        const selectedUserRadio = document.querySelector('input[name="icon"]:checked');
+        loggedInUser = 'rose'; // Default user
+        currentPassword = password;
 
-        if (!password || !selectedUserRadio) {
-            errorMessage.textContent = 'Please select a user and enter the password.';
+        if (!password) {
+            errorMessage.textContent = 'Please enter the password.';
             return;
         }
 
-        loggedInUser = selectedUserRadio.value;
-        currentPassword = password;
         errorMessage.textContent = 'Loading...';
 
         fetch(APP_SCRIPT_URL)
@@ -171,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(result => {
             if (result.status === 'success') {
-                // --- NEW LOGIC: Update UI without reloading ---
                 const userToUpdate = usersData.find(u => u.username === username);
                 if (userToUpdate) {
                     userToUpdate.current_local_points = newLocal;
