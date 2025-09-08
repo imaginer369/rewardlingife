@@ -7,7 +7,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    overflow-y: auto; /* Allow scrolling for more content */
+    overflow-y: auto;
 }
 
 #password-container, #dashboard-container {
@@ -50,7 +50,7 @@ h1 {
     transform: scale(1.2);
 }
 
-input[type="password"], input[type="number"] {
+input[type="password"], input[type="number"], input[type="text"] {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
@@ -64,7 +64,7 @@ input[type="password"] {
     width: calc(100% - 2em);
 }
 
-input[type="password"]::placeholder {
+input::placeholder {
     color: #bbb;
 }
 
@@ -94,7 +94,7 @@ button:hover {
 
 #user-cards-container {
     display: flex;
-    flex-wrap: wrap; /* Allow cards to wrap to the next line */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 1.5em;
     margin-top: 2.5em;
@@ -118,22 +118,91 @@ button:hover {
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
 }
 
-.user-card i {
-    font-size: 2.5em;
-    margin-bottom: 0.3em;
-    color: #e94560;
+.user-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 0 auto;
 }
 
 .user-card h3 {
     font-weight: 400;
-    margin-bottom: 0.5em;
+    margin-bottom: 0;
     color: #fff;
+}
+
+.button-group {
+    margin-top: auto; /* Pushes buttons to the bottom */
+    padding-top: 1em;
+}
+
+.button-group button {
+    width: 48%;
+    padding: 0.6em 0;
+    margin: 0 1%;
+}
+
+.add-points-button { background-color: #3b82f6; }
+.add-points-button:hover { background-color: #2563eb; }
+.redeem-points-button { background-color: #ef4444; }
+.redeem-points-button:hover { background-color: #dc2626; }
+
+/* --- MODAL STYLES --- */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: #2c2c3e;
+    color: #fff;
+    margin: 15% auto;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 80%;
+    max-width: 450px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-button:hover, .close-button:focus {
+    color: #fff;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 1.5em;
 }
 
 .update-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1em;
+    margin-bottom: 1.2em;
+}
+
+.update-container.reason-container {
+    flex-direction: column;
+    align-items: stretch;
     gap: 0.5em;
 }
 
@@ -142,16 +211,70 @@ button:hover {
     color: #ccc;
 }
 
-.update-container input[type="number"] {
-    width: 60px; /* Smaller input fields for points */
-    padding: 0.5em;
+.update-container input[type="number"], .update-container input[type="text"] {
+    width: 80px;
+    padding: 0.6em;
+    box-sizing: border-box;
 }
 
-.update-button {
-    background-color: #3b82f6; /* A different color for update */
-    padding: 0.6em 1.2em;
+.update-container input[type="text"] {
+    width: 100%;
 }
 
-.update-button:hover {
-    background-color: #2563eb;
+.modal-content button.update-button {
+    width: 100%;
+    margin-top: 1em;
+    padding: 0.8em;
+    font-size: 1em;
+}
+
+@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+@keyframes slideIn { from {transform: translateY(-50px);} to {transform: translateY(0);} }
+
+
+/* --- RESPONSIVE DESIGN FOR MOBILE --- */
+@media (max-width: 768px) {
+    body {
+        display: block;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    #password-container, #dashboard-container {
+        margin: 1em;
+        padding: 1.5em;
+        width: auto;
+        box-shadow: none;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    #user-cards-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1em;
+    }
+
+    .user-card {
+        width: 90%;
+        max-width: 380px;
+    }
+
+    .modal-content {
+        width: 90%;
+        margin: 30% auto;
+        padding: 20px;
+    }
+
+    .update-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5em;
+    }
+
+    .update-container input[type="number"] {
+        width: 100%;
+    }
 }
