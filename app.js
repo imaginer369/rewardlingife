@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURATION ---
-    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrmwaRCxN8ScLPHY4Ftpbo4UdFOoCfjFixhVk_nHDLefV-RZFkTDfFkOIdasVOjChjPg/exec';
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwm4eiWDbmMxGADofaJCkjV0V7F3KgL3PfE-QeYwhaEexl9G_5uQhIu63R_FrXUZmIZA/exec';
 
     // --- DOM ELEMENTS ---
     const passwordContainer = document.getElementById('password-container');
