@@ -92,9 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Send the update to the Google Apps Script using a POST request
             fetch(APP_SCRIPT_URL, {
                 method: 'POST',
+                // The body is still a JSON string
                 body: JSON.stringify(requestData),
+                // IMPORTANT: Change Content-Type to avoid preflight (CORS) errors
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'text/plain;charset=utf-8',
                 }
             })
             .then(response => response.json())
